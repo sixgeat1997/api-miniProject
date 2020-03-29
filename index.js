@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const url = 'https://passport.psu.ac.th/authentication/authentication.asmx?wsdl';
 const app = express()
 const cors = require('cors')
+const port = process.env.PORT || 3000;
 
 
 app.use(cors())
@@ -12,8 +13,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 let posts = [
-    { 'id': 0, 'activity': 'Open house', 'address': 'male domitory', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 20 },
-    { 'id': 1, 'activity': 'Open house', 'address': 'male domitory', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 50 }
+    { 'id': 1, 'activity': 'Open house', 'address': 'male domitory', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 50, std: [{ id: 5935512035, name: "chayanon phonphet" }, { id: 5935512030, name: "ismael hama" }] },
+    { 'id': 0, 'activity': 'Open house', 'address': 'male domitory', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 20, std: [{ id: 5935512038, name: "chayanon phonphet" }] },
 ]
 
 app.get('/', (req, res) => {
@@ -21,15 +22,18 @@ app.get('/', (req, res) => {
 })
 
 app.post('/post', (req, res) => {
+    console.log(req.body);
+
     var post = {}
-    post.id = posts.length > 0 ? posts[posts.length - 1].id + 1 : 0
+    post.id = posts.length > 0 ? posts[0].id + 1 : 0
     post.activity = req.body.activity
     post.address = req.body.address
     post.date = req.body.date
     post.name = req.body.name
     post.hours = +req.body.hours
     post.people = +req.body.people
-    posts.push(post)
+    post.std = req.body.std
+    posts.unshift(post)
     res.json({ message: "success" })
 })
 
@@ -54,6 +58,8 @@ app.post('/', (req, res) => {
 })
 
 app.put('/update/:id_post', (req, res) => {
+    console.log(req.body);
+
     let id = req.params.id_post
     let index = posts.findIndex(p => (p.id === +id))
     posts[index].activity = req.body.activity
@@ -62,7 +68,17 @@ app.put('/update/:id_post', (req, res) => {
     posts[index].name = req.body.name
     posts[index].hours = +req.body.hours
     posts[index].people = +req.body.people
+    posts[index].std = req.body.std
     res.json({ message: 'post updated!' + req.params.id_post });
+})
+
+app.get('/:id', (req, res) => {
+
+    let id = req.params.id
+    let post = posts.find(p => (p.id === +id))
+    console.log(post);
+
+    res.json(post);
 })
 
 app.delete('/delete/:id_post', (req, res) => {
@@ -73,4 +89,4 @@ app.delete('/delete/:id_post', (req, res) => {
 })
 
 app.use("*", (req, res) => res.status(404).send('404 Not found'));
-app.listen(80, () => console.log('Server is ready!'))
+app.listen(port, () => console.log('Server is ready!'))
