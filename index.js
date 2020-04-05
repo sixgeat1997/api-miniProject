@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const url = 'https://passport.psu.ac.th/authentication/authentication.asmx?wsdl';
 const app = express()
 const cors = require('cors')
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 
 
 app.use(cors())
@@ -13,8 +13,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 let posts = [
-    { 'id': 1, 'activity': 'Open house', 'address': 'male domitory','des':'abcdefg', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 50, std: [{ id: 5935512035, name: "chayanon phonphet" }, { id: 5935512030, name: "ismael hama" }] },
-    { 'id': 0, 'activity': 'Open house', 'address': 'male domitory','des':'abcdefg', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 20, std: [{ id: 5935512038, name: "chayanon phonphet" }] },
+    { 'id': 1, 'activity': 'Open house', 'address': 'male domitory', 'des': 'abcdefg', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 50, std: [{ id: 5935512035, name: "chayanon phonphet" }, { id: 5935512030, name: "ismael hama" }] },
+    { 'id': 0, 'activity': 'Open house', 'address': 'male domitory', 'des': 'abcdefg', 'date': '12/4/63', 'name': 'Por', 'hours': 3, 'people': 20, std: [{ id: 5935512038, name: "chayanon phonphet" }] },
 ]
 
 app.get('/', (req, res) => {
@@ -46,7 +46,7 @@ app.post('/', (req, res) => {
             user.username = req.body.username
             user.password = req.body.password
             console.log(user);
-            
+
             // client.GetStaffDetails(user, function (err, response) {
             client.GetStudentDetails(user, function (err, response) {
                 if (err) console.error(err);
@@ -84,11 +84,11 @@ app.get('/:id', (req, res) => {
 })
 
 app.delete('/delete/:id_post', (req, res) => {
-    let id = req.params.id_post 
+    let id = req.params.id_post
     let index = posts.findIndex(p => p.id === +id)
     posts.splice(index, 1)
     res.json({ message: 'Post deleted: ' + req.params.bear_id });
 })
 
 app.use("*", (req, res) => res.status(404).send('404 Not found'));
-app.listen(80, () => console.log('Server is ready!'))
+app.listen(port, () => console.log('Server is ready!'))
